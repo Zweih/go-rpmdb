@@ -1,3 +1,5 @@
+//go:build noextradeps
+
 package rpmdb
 
 import (

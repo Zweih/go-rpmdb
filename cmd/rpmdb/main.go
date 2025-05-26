@@ -1,3 +1,5 @@
+//go:build noextradeps
+
 package main
 
 import (
@@ -5,9 +7,8 @@ import (
 	"log"
 
 	rpmdb "github.com/Zweih/go-rpmdb/pkg"
-	multierror "github.com/hashicorp/go-multierror"
-
 	_ "github.com/glebarez/go-sqlite"
+	multierror "github.com/hashicorp/go-multierror"
 )
 
 func main() {
