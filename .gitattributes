@@ -1,0 +1,14 @@
+# exclude test files + test data from Git archives and go mod downloads
+*_test.go export-ignore
+**/testdata/ export-ignore
+**/fixtures/ export-ignore
+**/test/ export-ignore
+**/*test*.sqlite export-ignore
+**/*test*.db export-ignore
+**/*.rpm export-ignore
+examples/ export-ignore
+docs/ export-ignore
+.github/ export-ignore
+*.md export-ignore
+Makefile export-ignore
+.gitignore export-ignore
