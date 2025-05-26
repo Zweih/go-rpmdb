@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	dbi "github.com/knqyf263/go-rpmdb/pkg/db"
+	dbi "github.com/Zweih/go-rpmdb/pkg/db"
 	"golang.org/x/xerrors"
 )
 

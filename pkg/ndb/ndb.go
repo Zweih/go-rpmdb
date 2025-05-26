@@ -28,7 +28,7 @@ import (
 	"os"
 	"unsafe"
 
-	dbi "github.com/knqyf263/go-rpmdb/pkg/db"
+	dbi "github.com/Zweih/go-rpmdb/pkg/db"
 	"golang.org/x/xerrors"
 )
 
@@ -84,9 +84,11 @@ type RpmNDB struct {
 	slots []ndbSlotEntry
 }
 
-const NDB_SlotEntriesPerPage = 4096 / 16 /* 16 == unsafe.Sizeof(NDBSlotEntry) */
-const NDB_HeaderMagic = 'R' | 'p'<<8 | 'm'<<16 | 'P'<<24
-const NDB_DBVersion = 0
+const (
+	NDB_SlotEntriesPerPage = 4096 / 16 /* 16 == unsafe.Sizeof(NDBSlotEntry) */
+	NDB_HeaderMagic        = 'R' | 'p'<<8 | 'm'<<16 | 'P'<<24
+	NDB_DBVersion          = 0
+)
 
 var ErrorInvalidNDB = xerrors.Errorf("invalid or unsupported NDB format")
 
@@ -120,7 +122,6 @@ func Open(path string) (*RpmNDB, error) {
 	// the first two slots are actually the NDB Header
 	slots := make([]ndbSlotEntry, hdrBuff.SlotNPages*NDB_SlotEntriesPerPage-2)
 	err = binary.Read(file, binary.LittleEndian, &slots)
-
 	if err != nil {
 		return nil, xerrors.Errorf("failed to read NDB slot pages: %w", err)
 	}

@@ -1,4 +1,4 @@
-module github.com/knqyf263/go-rpmdb
+module github.com/Zweih/go-rpmdb
 
 go 1.22.0
 

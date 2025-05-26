@@ -38,6 +38,12 @@ const (
 	RPMTAG_DIRNAMES       = 1118 /* s[] */
 	RPMTAG_FILEDIGESTALGO = 5011 /* i  */
 	RPMTAG_SUMMARY        = 1004 /* s */
+	RPMTAG_BUILDTIME      = 1006 /* i */
+	RPMTAG_PACKAGER       = 1015 /* s */
+	RPMTAG_GROUP          = 1016 /* s */
+	RPMTAG_URL            = 1020 /* s */
+	RPMTAG_CONFLICTNAME   = 1054 /* s[] */
+	RPMTAG_OBSOLETENAME   = 1090 /* s[] */
 
 	// rpmTag_enhances
 	// https://github.com/rpm-software-management/rpm/blob/rpm-4.16.0-release/lib/rpmtag.h#L375

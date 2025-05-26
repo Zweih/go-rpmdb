@@ -11,89 +11,87 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-var (
-	packageTests = []struct {
-		name    string
-		file    string // Test input file
-		pkgList []*PackageInfo
-	}{
-		{
-			name:    "CentOS5 plain",
-			file:    "testdata/centos5-plain/Packages",
-			pkgList: CentOS5Plain(),
-		},
-		{
-			name:    "CentOS6 Plain",
-			file:    "testdata/centos6-plain/Packages",
-			pkgList: CentOS6Plain(),
-		},
-		{
-			name:    "CentOS6 with Development tools",
-			file:    "testdata/centos6-devtools/Packages",
-			pkgList: CentOS6DevTools(),
-		},
-		{
-			name:    "CentOS6 with many packages",
-			file:    "testdata/centos6-many/Packages",
-			pkgList: CentOS6Many(),
-		},
-		{
-			name:    "CentOS7 Plain",
-			file:    "testdata/centos7-plain/Packages",
-			pkgList: CentOS7Plain(),
-		},
-		{
-			name:    "CentOS7 with Development tools",
-			file:    "testdata/centos7-devtools/Packages",
-			pkgList: CentOS7DevTools(),
-		},
-		{
-			name:    "CentOS7 with many packages",
-			file:    "testdata/centos7-many/Packages",
-			pkgList: CentOS7Many(),
-		},
-		{
-			name:    "CentOS7 with Python 3.5",
-			file:    "testdata/centos7-python35/Packages",
-			pkgList: CentOS7Python35(),
-		},
-		{
-			name:    "CentOS7 with httpd 2.4",
-			file:    "testdata/centos7-httpd24/Packages",
-			pkgList: CentOS7Httpd24(),
-		},
-		{
-			name:    "CentOS8 with modules",
-			file:    "testdata/centos8-modularitylabel/Packages",
-			pkgList: CentOS8Modularitylabel(),
-		},
-		{
-			name:    "RHEL UBI8 from s390x",
-			file:    "testdata/ubi8-s390x/Packages",
-			pkgList: UBI8s390x(),
-		},
-		{
-			name:    "SLE15 with NDB style rpm database",
-			file:    "testdata/sle15-bci/Packages.db",
-			pkgList: SLE15WithNDB(),
-		},
-		{
-			name:    "Fedora35 with SQLite3 style rpm database",
-			file:    "testdata/fedora35/rpmdb.sqlite",
-			pkgList: Fedora35WithSQLite3(),
-		},
-		{
-			name:    "Fedora35 plus MongoDB with SQLite3 style rpm database",
-			file:    "testdata/fedora35-plus-mongo/rpmdb.sqlite",
-			pkgList: Fedora35PlusMongoDBWithSQLite3(),
-		},
-		{
-			name:    "Rocky9 with SQLite3 style rpm database (newer signature format)",
-			file:    "testdata/rockylinux-9/rpmdb.sqlite",
-			pkgList: Rockylinux9WithSQLite3(),
-		},
-	}
-)
+var packageTests = []struct {
+	name    string
+	file    string // Test input file
+	pkgList []*PackageInfo
+}{
+	{
+		name:    "CentOS5 plain",
+		file:    "testdata/centos5-plain/Packages",
+		pkgList: CentOS5Plain(),
+	},
+	{
+		name:    "CentOS6 Plain",
+		file:    "testdata/centos6-plain/Packages",
+		pkgList: CentOS6Plain(),
+	},
+	{
+		name:    "CentOS6 with Development tools",
+		file:    "testdata/centos6-devtools/Packages",
+		pkgList: CentOS6DevTools(),
+	},
+	{
+		name:    "CentOS6 with many packages",
+		file:    "testdata/centos6-many/Packages",
+		pkgList: CentOS6Many(),
+	},
+	{
+		name:    "CentOS7 Plain",
+		file:    "testdata/centos7-plain/Packages",
+		pkgList: CentOS7Plain(),
+	},
+	{
+		name:    "CentOS7 with Development tools",
+		file:    "testdata/centos7-devtools/Packages",
+		pkgList: CentOS7DevTools(),
+	},
+	{
+		name:    "CentOS7 with many packages",
+		file:    "testdata/centos7-many/Packages",
+		pkgList: CentOS7Many(),
+	},
+	{
+		name:    "CentOS7 with Python 3.5",
+		file:    "testdata/centos7-python35/Packages",
+		pkgList: CentOS7Python35(),
+	},
+	{
+		name:    "CentOS7 with httpd 2.4",
+		file:    "testdata/centos7-httpd24/Packages",
+		pkgList: CentOS7Httpd24(),
+	},
+	{
+		name:    "CentOS8 with modules",
+		file:    "testdata/centos8-modularitylabel/Packages",
+		pkgList: CentOS8Modularitylabel(),
+	},
+	{
+		name:    "RHEL UBI8 from s390x",
+		file:    "testdata/ubi8-s390x/Packages",
+		pkgList: UBI8s390x(),
+	},
+	{
+		name:    "SLE15 with NDB style rpm database",
+		file:    "testdata/sle15-bci/Packages.db",
+		pkgList: SLE15WithNDB(),
+	},
+	{
+		name:    "Fedora35 with SQLite3 style rpm database",
+		file:    "testdata/fedora35/rpmdb.sqlite",
+		pkgList: Fedora35WithSQLite3(),
+	},
+	{
+		name:    "Fedora35 plus MongoDB with SQLite3 style rpm database",
+		file:    "testdata/fedora35-plus-mongo/rpmdb.sqlite",
+		pkgList: Fedora35PlusMongoDBWithSQLite3(),
+	},
+	{
+		name:    "Rocky9 with SQLite3 style rpm database (newer signature format)",
+		file:    "testdata/rockylinux-9/rpmdb.sqlite",
+		pkgList: Rockylinux9WithSQLite3(),
+	},
+}
 
 func TestPackageList(t *testing.T) {
 	for _, tt := range packageTests {
@@ -121,6 +119,12 @@ func TestPackageList(t *testing.T) {
 				g.GroupNames = nil
 				g.Provides = nil
 				g.Requires = nil
+				g.Conflicts = nil
+				g.Obsoletes = nil
+				g.BuildTime = 0
+				g.URL = ""
+				g.Packager = ""
+				g.Group = ""
 			}
 
 			for i, p := range tt.pkgList {
@@ -267,6 +271,11 @@ func TestRpmDB_Package(t *testing.T) {
 					"rpmlib(VersionedDependencies)",
 					"rtld(GNU_HASH)",
 				},
+				Obsoletes: []string{"Distutils", "python2"},
+				Group:     "Development/Languages",
+				URL:       "http://www.python.org/",
+				BuildTime: 1357732364,
+				Packager:  "",
 			},
 			wantInstalledFiles:     CentOS5PythonInstalledFiles,
 			wantInstalledFileNames: CentOS5PythonInstalledFileNames,
@@ -668,6 +677,12 @@ func TestRpmDB_Package(t *testing.T) {
 					"rpmlib(VersionedDependencies)",
 					"rpmlib(PayloadIsXz)",
 				},
+				Conflicts: []string{"binutils", "prelink"},
+				Obsoletes: []string{"glibc-profile"},
+				Packager:  "CentOS BuildSystem <http://bugs.centos.org>",
+				Group:     "System Environment/Libraries",
+				URL:       "http://sources.redhat.com/glibc/",
+				BuildTime: 1529414884,
 			},
 			wantInstalledFiles:     CentOS6GlibcInstalledFiles,
 			wantInstalledFileNames: CentOS6GlibcInstalledFileNames,
@@ -767,6 +782,11 @@ func TestRpmDB_Package(t *testing.T) {
 					"rpmlib(PayloadIsXz)",
 					"rtld(GNU_HASH)",
 				},
+				Conflicts: []string{"node"},
+				Packager:  "CentOS Buildsys <bugs@centos.org>",
+				Group:     "Development/Languages",
+				URL:       "http://nodejs.org/",
+				BuildTime: 1594133092,
 			},
 			wantInstalledFiles:     CentOS8NodejsInstalledFiles,
 			wantInstalledFileNames: CentOS8NodejsInstalledFileNames,
@@ -817,6 +837,12 @@ func TestRpmDB_Package(t *testing.T) {
 					"rpmlib(FileDigests)",
 					"rpmlib(PayloadFilesHavePrefix)",
 				},
+				BuildTime: 1643075892,
+				URL:       "https://curl.haxx.se",
+				Conflicts: []string(nil),
+				Obsoletes: []string(nil),
+				Packager:  "",
+				Group:     "System Environment/NetworkingLibraries",
 			},
 			wantInstalledFiles:     Mariner2CurlInstalledFiles,
 			wantInstalledFileNames: Mariner2CurlInstalledFileNames,
@@ -844,7 +870,8 @@ func TestRpmDB_Package(t *testing.T) {
 					"hostname",
 					"hostname(aarch-64)",
 				},
-				Requires: []string{"/bin/sh",
+				Requires: []string{
+					"/bin/sh",
 					"/bin/sh",
 					"/usr/bin/bash",
 					"ld-linux-aarch64.so.1()(64bit)",
@@ -859,6 +886,12 @@ func TestRpmDB_Package(t *testing.T) {
 					"rpmlib(PayloadIsZstd)",
 					"rtld(GNU_HASH)",
 				},
+				BuildTime: 1652567978,
+				URL:       "http://packages.qa.debian.org/h/hostname.html",
+				Conflicts: []string(nil),
+				Obsoletes: []string(nil),
+				Packager:  "Rocky Linux Build System (Peridot) <releng@rockylinux.org>",
+				Group:     "Unspecified",
 			},
 			wantInstalledFiles:     Rockylinux9HostnameFiles,
 			wantInstalledFileNames: Rockylinux9HostnameFileNames,
@@ -910,6 +943,12 @@ func TestRpmDB_Package(t *testing.T) {
 					"rpmlib(PayloadIsXz)",
 					"rtld(GNU_HASH)",
 				},
+				BuildTime: 1680515723,
+				URL:       "http://en.wikipedia.org/wiki/Util-linux",
+				Conflicts: []string{"filesystem"},
+				Obsoletes: []string(nil),
+				Packager:  "Red Hat, Inc. <http://bugzilla.redhat.com/bugzilla>",
+				Group:     "Development/Libraries",
 			},
 			wantInstalledFiles:     LibuuidInstalledFiles,
 			wantInstalledFileNames: LibuuidInstalledFileNames,
