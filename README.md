@@ -1,3 +1,7 @@
+This is a fork specific to my project's needs. <b>DO NOT USE THIS FOR YOUR PROJECT</b>.
+
+YOU PROBABLY MEAN TO USE [knqyf263/go-rpmdb](https://github.com/knqyf263/go-rpmdb/).
+
 # go-rpmdb
 Library for enumerating packages in an RPM DB `Packages` file (without bindings).
 
