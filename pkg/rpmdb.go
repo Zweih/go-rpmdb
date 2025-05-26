@@ -1,10 +1,10 @@
 package rpmdb
 
 import (
-	"github.com/knqyf263/go-rpmdb/pkg/bdb"
-	dbi "github.com/knqyf263/go-rpmdb/pkg/db"
-	"github.com/knqyf263/go-rpmdb/pkg/ndb"
-	"github.com/knqyf263/go-rpmdb/pkg/sqlite3"
+	"github.com/Zweih/go-rpmdb/pkg/bdb"
+	dbi "github.com/Zweih/go-rpmdb/pkg/db"
+	"github.com/Zweih/go-rpmdb/pkg/ndb"
+	"github.com/Zweih/go-rpmdb/pkg/sqlite3"
 	"golang.org/x/xerrors"
 )
 
@@ -39,7 +39,6 @@ func Open(path string) (*RpmDB, error) {
 	return &RpmDB{
 		db: odb,
 	}, nil
-
 }
 
 func (d *RpmDB) Close() error {

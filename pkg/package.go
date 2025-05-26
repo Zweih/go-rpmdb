@@ -39,6 +39,13 @@ type PackageInfo struct {
 	FileFlags       []int32
 	UserNames       []string
 	GroupNames      []string
+	BuildTime       int
+	URL             string
+	Group           string
+	Packager        string
+
+	Conflicts []string
+	Obsoletes []string
 
 	Provides []string
 	Requires []string
@@ -256,6 +263,55 @@ func getNEVRA(indexEntries []indexEntry) (*PackageInfo, error) {
 				return nil, xerrors.Errorf("failed to parse pgp signature: %w", err)
 			}
 			pkgInfo.PGP = val
+		case RPMTAG_BUILDTIME:
+			if ie.Info.Type != RPM_INT32_TYPE {
+				return nil, xerrors.New("invalid tag buildtime")
+			}
+			buildTime, err := parseInt32(ie.Data)
+			if err != nil {
+				return nil, xerrors.Errorf("failed to parse buildtime: %w", err)
+			}
+			pkgInfo.BuildTime = buildTime
+		case RPMTAG_URL:
+			if ie.Info.Type != RPM_STRING_TYPE {
+				return nil, xerrors.New("invalid tag url")
+			}
+			pkgInfo.URL = string(bytes.TrimRight(ie.Data, "\x00"))
+			if pkgInfo.URL == "(none)" {
+				pkgInfo.URL = ""
+			}
+		case RPMTAG_PACKAGER:
+			if ie.Info.Type != RPM_STRING_TYPE {
+				return nil, xerrors.New("invalid tag package")
+			}
+			pkgInfo.Packager = string(bytes.TrimRight(ie.Data, "\x00"))
+			if pkgInfo.Packager == "(none)" {
+				pkgInfo.Packager = ""
+			}
+		case RPMTAG_GROUP:
+			if ie.Info.Type != RPM_I18NSTRING_TYPE && ie.Info.Type != RPM_STRING_TYPE {
+				return nil, xerrors.New("invalid tag group")
+			}
+
+			if ie.Info.Type == RPM_I18NSTRING_TYPE {
+				pkgInfo.Group = string(bytes.Split(ie.Data, []byte{0})[0])
+			} else {
+				pkgInfo.Group = string(bytes.TrimRight(ie.Data, "\x00"))
+			}
+
+			if pkgInfo.Group == "(none)" {
+				pkgInfo.Group = ""
+			}
+		case RPMTAG_CONFLICTNAME:
+			if ie.Info.Type != RPM_STRING_ARRAY_TYPE {
+				return nil, xerrors.New("invalid tag conflictname")
+			}
+			pkgInfo.Conflicts = parseStringArray(ie.Data)
+		case RPMTAG_OBSOLETENAME:
+			if ie.Info.Type != RPM_STRING_ARRAY_TYPE {
+				return nil, xerrors.New("invalid tag obsoletename")
+			}
+			pkgInfo.Obsoletes = parseStringArray(ie.Data)
 		}
 	}
 
@@ -293,6 +349,7 @@ type pgp4Sig struct {
 var pubKeyLookup = map[uint8]string{
 	0x01: "RSA",
 }
+
 var hashLookup = map[uint8]string{
 	0x02: "SHA1",
 	0x08: "SHA256",
