@@ -1,4 +1,4 @@
-//go:build noextradeps
+//go:build !noextradeps
 
 package rpmdb
 
