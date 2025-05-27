@@ -1,4 +1,4 @@
-package rpmdb
+package pkg
 
 const (
 	// ref. https://github.com/rpm-software-management/rpm/blob/rpm-4.14.3-release/lib/rpmtag.h#L34

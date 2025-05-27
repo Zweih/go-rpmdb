@@ -1,4 +1,4 @@
-package rpmdb
+package pkg
 
 import (
 	"errors"
@@ -69,11 +69,11 @@ func (d *RpmDB) ListPackages() ([]*PackageInfo, error) {
 			return nil, entry.Err
 		}
 
-		indexEntries, err := headerImport(entry.Value)
+		indexEntries, err := HeaderImport(entry.Value)
 		if err != nil {
 			return nil, fmt.Errorf("error during importing header: %w", err)
 		}
-		pkg, err := getNEVRA(indexEntries)
+		pkg, err := GetNEVRA(indexEntries)
 		if err != nil {
 			return nil, fmt.Errorf("invalid package info: %w", err)
 		}

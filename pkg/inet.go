@@ -1,4 +1,4 @@
-package rpmdb
+package pkg
 
 import (
 	"encoding/binary"

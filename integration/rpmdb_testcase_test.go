@@ -1,4 +1,6 @@
-package rpmdb
+package integration
+
+import "github.com/Zweih/go-rpmdb/pkg"
 
 func intRef(i ...int) *int {
 	if len(i) == 0 {
@@ -22,10 +24,10 @@ type commonPackageInfo struct {
 	SigMD5          string
 }
 
-func toPackageInfo(pkgs []*commonPackageInfo) []*PackageInfo {
-	pkgList := make([]*PackageInfo, 0, len(pkgs))
+func toPackageInfo(pkgs []*commonPackageInfo) []*pkg.PackageInfo {
+	pkgList := make([]*pkg.PackageInfo, 0, len(pkgs))
 	for _, p := range pkgs {
-		pkgList = append(pkgList, &PackageInfo{
+		pkgList = append(pkgList, &pkg.PackageInfo{
 			Epoch:           p.Epoch,
 			Name:            p.Name,
 			Version:         p.Version,
@@ -47,7 +49,7 @@ func toPackageInfo(pkgs []*commonPackageInfo) []*PackageInfo {
 var (
 	// docker run --rm -it centos:5 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS5Plain = func() []*PackageInfo {
+	CentOS5Plain = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "setup", "2.5.58", "9.el5", "noarch", "setup-2.5.58-9.el5.src.rpm", 381527, "public domain", "CentOS", "", "A set of system configuration and setup files.", "9d46d21756374c2790de2d98d03ef456"},
 			{intRef(), "basesystem", "8.0", "5.1.1.el5.centos", "noarch", "basesystem-8.0-5.1.1.el5.centos.src.rpm", 0, "public domain", "CentOS", "", "The skeleton package which defines a simple CentOS system.", "15c24ea32e8a66ea5000bb968950e511"},
@@ -167,7 +169,7 @@ var (
 	// docker run --rm -it centos:6 bash
 	// yum groupinstall -y "Development tools"
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS6DevTools = func() []*PackageInfo {
+	CentOS6DevTools = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "iproute", "2.6.32", "57.el6", "x86_64", "iproute-2.6.32-57.el6.src.rpm", 963477, "GPLv2+ and Public Domain", "CentOS", "", "Advanced IP routing and network device configuration tools", "68c6859576cf64a7ed187072908587b2"},
 			{intRef(), "setup", "2.8.14", "23.el6", "noarch", "setup-2.8.14-23.el6.src.rpm", 666669, "Public Domain", "CentOS", "", "A set of system configuration and setup files", "f58d4ff770a377d42854025b5c64a709"},
@@ -444,7 +446,7 @@ var (
 	// yum install -y ncurses-devel newt-devel numactl-devel pciutils-devel python-devel zlib-devel
 	// yum install -y net-tools bc
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS6Many = func() []*PackageInfo {
+	CentOS6Many = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "iproute", "2.6.32", "57.el6", "x86_64", "iproute-2.6.32-57.el6.src.rpm", 963477, "GPLv2+ and Public Domain", "CentOS", "", "Advanced IP routing and network device configuration tools", "68c6859576cf64a7ed187072908587b2"},
 			{intRef(), "setup", "2.8.14", "23.el6", "noarch", "setup-2.8.14-23.el6.src.rpm", 666669, "Public Domain", "CentOS", "", "A set of system configuration and setup files", "f58d4ff770a377d42854025b5c64a709"},
@@ -497,7 +499,7 @@ var (
 
 	// docker run --rm -it centos:6 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS6Plain = func() []*PackageInfo {
+	CentOS6Plain = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "setup", "2.8.14", "23.el6", "noarch", "setup-2.8.14-23.el6.src.rpm", 666669, "Public Domain", "CentOS", "", "A set of system configuration and setup files", "f58d4ff770a377d42854025b5c64a709"},
 			{intRef(), "basesystem", "10.0", "4.el6", "noarch", "basesystem-10.0-4.el6.src.rpm", 0, "Public Domain", "CentOS", "", "The skeleton package which defines a simple Red Hat Enterprise Linux system", "bf36e0d2771604b8ad56d9696b5edd3c"},
@@ -636,7 +638,7 @@ var (
 	// docker run --rm -it centos:7 bash
 	// yum groupinstall -y "Development tools"
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS7DevTools = func() []*PackageInfo {
+	CentOS7DevTools = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "libproxy", "0.4.11", "11.el7", "x86_64", "libproxy-0.4.11-11.el7.src.rpm", 164014, "LGPLv2+", "CentOS", "", "A library handling all the details of proxy configuration", "5238ea30a29e5163ee6010d2696acb1d"},
 			{intRef(), "tzdata", "2018e", "3.el7", "noarch", "tzdata-2018e-3.el7.src.rpm", 1966505, "Public Domain", "CentOS", "", "Timezone data", "a1e5c65f5b87e33b23419b153155db0a"},
@@ -909,7 +911,7 @@ var (
 
 	// docker run --rm -it centos/httpd-24-centos7 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS7Httpd24 = func() []*PackageInfo {
+	CentOS7Httpd24 = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(32), "bind-license", "9.9.4", "73.el7_6", "noarch", "bind-9.9.4-73.el7_6.src.rpm", 26831, "ISC", "CentOS", "", "License of the BIND DNS suite", "98dd71aa6b527468317e3e96e1629ddb"},
 			{intRef(), "bash", "4.2.46", "31.el7", "x86_64", "bash-4.2.46-31.el7.src.rpm", 3667773, "GPLv3+", "CentOS", "", "The GNU Bourne Again shell", "ed4d986a9753c79474e6ab726f40d864"},
@@ -1148,7 +1150,7 @@ var (
 	// yum install -y ncurses-devel newt-devel numactl-devel pciutils-devel python-devel zlib-devel
 	// yum install -y net-tools bc
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS7Many = func() []*PackageInfo {
+	CentOS7Many = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "gnutls", "3.3.29", "9.el7_6", "x86_64", "gnutls-3.3.29-9.el7_6.src.rpm", 2097819, "GPLv3+ and LGPLv2+", "CentOS", "", "A TLS protocol implementation", "f82fa52300da8811286430201915afce"},
 			{intRef(), "nss-softokn-freebl", "3.36.0", "5.el7_5", "x86_64", "nss-softokn-3.36.0-5.el7_5.src.rpm", 565628, "MPLv2.0", "CentOS", "", "Freebl library for the Network Security Services", "cf0360bbf0396334bb569646bbec25d3"},
@@ -1553,7 +1555,7 @@ var (
 
 	// docker run --rm -it centos:7 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS7Plain = func() []*PackageInfo {
+	CentOS7Plain = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "tzdata", "2018e", "3.el7", "noarch", "tzdata-2018e-3.el7.src.rpm", 1966505, "Public Domain", "CentOS", "", "Timezone data", "a1e5c65f5b87e33b23419b153155db0a"},
 			{intRef(), "nss-softokn-freebl", "3.36.0", "5.el7_5", "x86_64", "nss-softokn-3.36.0-5.el7_5.src.rpm", 565628, "MPLv2.0", "CentOS", "", "Freebl library for the Network Security Services", "cf0360bbf0396334bb569646bbec25d3"},
@@ -1706,7 +1708,7 @@ var (
 
 	// docker run --rm -it centos/python-35-centos7 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS7Python35 = func() []*PackageInfo {
+	CentOS7Python35 = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "fontconfig-devel", "2.13.0", "4.3.el7", "x86_64", "fontconfig-2.13.0-4.3.el7.src.rpm", 111050, "MIT and Public Domain and UCD", "CentOS", "", "Font configuration and customization library", "2adc764bcb07849e3c9b3313bea0a5d9"},
 			{intRef(32), "bind-license", "9.9.4", "73.el7_6", "noarch", "bind-9.9.4-73.el7_6.src.rpm", 26831, "ISC", "CentOS", "", "License of the BIND DNS suite", "98dd71aa6b527468317e3e96e1629ddb"},
@@ -2062,7 +2064,7 @@ var (
 	// yum groupinstall -y "Development tools"
 	// yum -y install nodejs podman-docker
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	CentOS8Modularitylabel = func() []*PackageInfo {
+	CentOS8Modularitylabel = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "strace", "4.24", "9.el8", "x86_64", "strace-4.24-9.el8.src.rpm", 2176244, "LGPL-2.1+ and GPL-2.0+", "CentOS", "", "Tracks and displays system calls associated with a running process", "0d086902619eb98efc1c415c910d2064"},
 			{intRef(), "libxcb", "1.13.1", "1.el8", "x86_64", "libxcb-1.13.1-1.el8.src.rpm", 1028472, "MIT", "CentOS", "", "A C binding to the X11 protocol", "9871866c5dc03e2f1adf8c7cc84d8a1d"},
@@ -2589,7 +2591,7 @@ var (
 
 	// docker run --platform s390x --rm -it registry.access.redhat.com/ubi8/ubi bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	UBI8s390x = func() []*PackageInfo {
+	UBI8s390x = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "tzdata", "2022a", "1.el8", "noarch", "tzdata-2022a-1.el8.src.rpm", 1891990, "Public Domain", "Red Hat, Inc.", "", "Timezone data", "1058856cc44cf659afb42c6a481bffba"},
 			{intRef(), "python3-pip-wheel", "9.0.3", "22.el8", "noarch", "python-pip-9.0.3-22.el8.src.rpm", 929805, "MIT and Python and ASL 2.0 and BSD and ISC and LGPLv2 and MPLv2.0 and (ASL 2.0 or BSD)", "Red Hat, Inc.", "", "The pip wheel", "eb3719e7a6391740511c3b91956067e5"},
@@ -2781,7 +2783,7 @@ var (
 
 	// docker run --rm -it registry.suse.com/bci/bci-minimal:15.3 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	SLE15WithNDB = func() []*PackageInfo {
+	SLE15WithNDB = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "system-user-root", "20190513", "3.3.1", "noarch", "system-user-root-20190513-3.3.1.src.rpm", 186, "MIT", "SUSE LLC <https://www.suse.com/>", "", "System user and group root", "2c914632f9c42c48931f4ed8182b59a2"},
 			{intRef(), "filesystem", "15.0", "11.3.2", "x86_64", "filesystem-15.0-11.3.2.src.rpm", 535, "MIT", "SUSE LLC <https://www.suse.com/>", "", "Basic Directory Layout", "8575edea6a9d5cf23b0c3a9cf65f5c71"},
@@ -2825,7 +2827,7 @@ var (
 
 	// docker run --rm -it fedora:35 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	Fedora35WithSQLite3 = func() []*PackageInfo {
+	Fedora35WithSQLite3 = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "libgcc", "11.2.1", "1.fc35", "x86_64", "gcc-11.2.1-1.fc35.src.rpm", 194980, "GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD", "Fedora Project", "", "GCC version 11 shared support library", "34477f066df520bcc8baf572e3923490"},
 			{intRef(), "crypto-policies", "20210819", "1.gitd0fdcfb.fc35", "noarch", "crypto-policies-20210819-1.gitd0fdcfb.fc35.src.rpm", 86107, "LGPLv2+", "Fedora Project", "", "System-wide crypto policies", "8b615ce53d4afc9bd0c8d2fce41c7a3b"},
@@ -2974,7 +2976,7 @@ var (
 	// dnf -y install https://repo.mongodb.org/yum/redhat/8/mongodb-org/5.0/x86_64/RPMS/mongodb-org-shell-5.0.9-1.el8.x86_64.rpm
 	// dnf -y install https://repo.mongodb.org/yum/redhat/8/mongodb-org/5.0/x86_64/RPMS/mongodb-cli-1.25.0.x86_64.rpm
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	Fedora35PlusMongoDBWithSQLite3 = func() []*PackageInfo {
+	Fedora35PlusMongoDBWithSQLite3 = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "libgcc", "11.2.1", "9.fc35", "x86_64", "gcc-11.2.1-9.fc35.src.rpm", 198596, "GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD", "Fedora Project", "", "GCC version 11 shared support library", "405419f81bb99a7298ea5a8eb55feded"},
 			{intRef(), "crypto-policies", "20210819", "1.gitd0fdcfb.fc35", "noarch", "crypto-policies-20210819-1.gitd0fdcfb.fc35.src.rpm", 86107, "LGPLv2+", "Fedora Project", "", "System-wide crypto policies", "8b615ce53d4afc9bd0c8d2fce41c7a3b"},
@@ -3125,7 +3127,7 @@ var (
 
 	// docker run --rm -it rockylinux:9 bash
 	// rpm -qa --queryformat "\{%{EPOCH}, \"%{NAME}\", \"%{VERSION}\", \"%{RELEASE}\", \"%{ARCH}\", \"%{SOURCERPM}\", %{SIZE}, \"%{LICENSE}\", \"%{VENDOR}\", \"\", \"%{SUMMARY}\", \"%{SIGMD5}\"\},\n" | sed "s/^{(none)/{intRef()/g" | sed -r 's/^\{([0-9]+),/{intRef(\1),/' | sed "s/(none)/0/g"
-	Rockylinux9WithSQLite3 = func() []*PackageInfo {
+	Rockylinux9WithSQLite3 = func() []*pkg.PackageInfo {
 		pkgs := []*commonPackageInfo{
 			{intRef(), "libgcc", "11.4.1", "2.1.el9", "aarch64", "gcc-11.4.1-2.1.el9.src.rpm", 226740, "GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD", "Rocky Enterprise Software Foundation", "", "GCC version 11 shared support library", "bffcb37f7529c515ef63883129d90b1f"},
 			{intRef(), "crypto-policies", "20230731", "1.git94f0e2c.el9_3.1", "noarch", "crypto-policies-20230731-1.git94f0e2c.el9_3.1.src.rpm", 86024, "LGPLv2+", "Rocky Enterprise Software Foundation", "", "System-wide crypto policies", "ff248c90791a5e77b33d0bd0be1166f6"},
@@ -3659,7 +3661,7 @@ var (
 		"/usr/share/licenses/libuuid/COPYING.BSD-3",
 	}
 
-	CentOS5PythonInstalledFiles = []FileInfo{
+	CentOS5PythonInstalledFiles = []pkg.FileInfo{
 		{Path: "/usr/bin/pydoc", Mode: 0x81ed, Digest: "ba5dcf9eb37e464cec372640192d64ad", Size: 82, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/bin/python", Mode: 0x81ed, Digest: "43c97c09763ed41358120d0f87df1a99", Size: 4736, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/bin/python2", Mode: 0xa1ff, Digest: "", Size: 6, Username: "root", Groupname: "root", Flags: 0},
@@ -3670,7 +3672,7 @@ var (
 		{Path: "/usr/share/man/man1/python.1.gz", Mode: 0x81a4, Digest: "5a6410bfbd042581f41d9045caf829e3", Size: 5307, Username: "root", Groupname: "root", Flags: 2},
 	}
 
-	CentOS6GlibcInstalledFiles = []FileInfo{
+	CentOS6GlibcInstalledFiles = []pkg.FileInfo{
 		{Path: "/etc/gai.conf", Mode: 0x81a4, Digest: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", Size: 0, Username: "root", Groupname: "root", Flags: 25},
 		{Path: "/etc/ld.so.cache", Mode: 0x81a4, Digest: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", Size: 0, Username: "root", Groupname: "root", Flags: 89},
 		{Path: "/etc/ld.so.conf", Mode: 0x81a4, Digest: "239c865e4c0746a01f82b03d38d620853bab2a2ba8e81d6f5606c503e0ea379f", Size: 28, Username: "root", Groupname: "root", Flags: 17},
@@ -4000,7 +4002,7 @@ var (
 		{Path: "/var/cache/ldconfig/aux-cache", Mode: 0x8180, Digest: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", Size: 0, Username: "root", Groupname: "root", Flags: 89},
 	}
 
-	CentOS8NodejsInstalledFiles = []FileInfo{
+	CentOS8NodejsInstalledFiles = []pkg.FileInfo{
 		{Path: "/usr/bin/node", Mode: 0x81ed, Digest: "b894371f1e9e4fc29eb10f06537f7e9d95302b75f43797b63ded087c56a2a1b4", Size: 31194672, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/lib/.build-id", Mode: 0x41ed, Digest: "", Size: 0, Username: "root", Groupname: "root", Flags: 4096},
 		{Path: "/usr/lib/.build-id/4c", Mode: 0x41ed, Digest: "", Size: 0, Username: "root", Groupname: "root", Flags: 4096},
@@ -4023,7 +4025,7 @@ var (
 		{Path: "/usr/share/systemtap/tapset/node.stp", Mode: 0x81a4, Digest: "1df168860f170690b202271d7f604514e64831523db62e7bae3f9a85cbbd7bf4", Size: 3495, Username: "root", Groupname: "root", Flags: 0},
 	}
 
-	Mariner2CurlInstalledFiles = []FileInfo{
+	Mariner2CurlInstalledFiles = []pkg.FileInfo{
 		{Path: "/usr/bin/curl", Mode: 0x81ed, Digest: "7ef6b3fd854d4ed189dd0aab2ffcf5e6bd58018ff69b97e1b86e1df7b86f3df0", Size: 267672, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/bin/curl-config", Mode: 0x81ed, Digest: "f044fcec45baaaaa7f2de43646719812a1fc75eb3582ae4c9bfc2fd0aa873afc", Size: 7515, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/share/licenses/curl", Mode: 0x41ed, Digest: "", Size: 0, Username: "root", Groupname: "root", Flags: 0},
@@ -4032,7 +4034,7 @@ var (
 		{Path: "/usr/share/man/man1/curl.1.gz", Mode: 0x81a4, Digest: "6a937dea68ab20b8bf9d376bb68fcfe06608a4ddb7d7725986c7ad7451817912", Size: 47985, Username: "root", Groupname: "root", Flags: 2},
 	}
 
-	LibuuidInstalledFiles = []FileInfo{
+	LibuuidInstalledFiles = []pkg.FileInfo{
 		{Path: "/usr/lib/.build-id", Mode: 0x41ed, Digest: "", Size: 0, Username: "root", Groupname: "root", Flags: 4096},
 		{Path: "/usr/lib/.build-id/df/ef6a880adac817216ab9866779a0725e017647", Mode: 0xa1ff, Digest: "", Size: 38, Username: "root", Groupname: "root", Flags: 4096},
 		{Path: "/usr/lib64/libuuid.so.1", Mode: 0xa1ff, Digest: "", Size: 16, Username: "root", Groupname: "root", Flags: 0},
@@ -4042,7 +4044,7 @@ var (
 		{Path: "/usr/share/licenses/libuuid/COPYING.BSD-3", Mode: 0x81a4, Digest: "9b718a9460fed5952466421235bc79eb49d4e9eacc920d7a9dd6285ab8fd6c6d", Size: 1391, Username: "root", Groupname: "root", Flags: 128},
 	}
 
-	Rockylinux9HostnameFiles = []FileInfo{
+	Rockylinux9HostnameFiles = []pkg.FileInfo{
 		{Path: "/usr/bin/dnsdomainname", Mode: 0xa1ff, Digest: "", Size: 8, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/bin/domainname", Mode: 0xa1ff, Digest: "", Size: 8, Username: "root", Groupname: "root", Flags: 0},
 		{Path: "/usr/bin/hostname", Mode: 0x81ed, Digest: "94ef5f552485167bbb790ab79b0ffb8f1b7b5f6e99d3a2d6becfbe77115a22c5", Size: 69256, Username: "root", Groupname: "root", Flags: 0},
