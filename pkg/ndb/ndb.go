@@ -29,7 +29,6 @@ import (
 	"unsafe"
 
 	dbi "github.com/Zweih/go-rpmdb/pkg/db"
-	"golang.org/x/xerrors"
 )
 
 /* The "New" Database format by RPM is currently not well documented outside
@@ -90,7 +89,7 @@ const (
 	NDB_DBVersion          = 0
 )
 
-var ErrorInvalidNDB = xerrors.Errorf("invalid or unsupported NDB format")
+var ErrorInvalidNDB = fmt.Errorf("invalid or unsupported NDB format")
 
 func Open(path string) (*RpmNDB, error) {
 	file, err := os.Open(path)
@@ -106,7 +105,7 @@ func Open(path string) (*RpmNDB, error) {
 	hdrBuff := ndbHeader{}
 	err = binary.Read(file, binary.LittleEndian, &hdrBuff)
 	if err != nil {
-		return nil, xerrors.Errorf("failed to read metadata: %w", err)
+		return nil, fmt.Errorf("failed to read metadata: %w", err)
 	}
 
 	if hdrBuff.HeaderMagic != NDB_HeaderMagic || hdrBuff.SlotNPages == 0 ||
@@ -116,14 +115,14 @@ func Open(path string) (*RpmNDB, error) {
 
 	// Sanity check against excessive memory usage
 	if hdrBuff.SlotNPages > 2048 {
-		return nil, xerrors.Errorf("slot page limit exceeded: %x", hdrBuff.SlotNPages)
+		return nil, fmt.Errorf("slot page limit exceeded: %x", hdrBuff.SlotNPages)
 	}
 
 	// the first two slots are actually the NDB Header
 	slots := make([]ndbSlotEntry, hdrBuff.SlotNPages*NDB_SlotEntriesPerPage-2)
 	err = binary.Read(file, binary.LittleEndian, &slots)
 	if err != nil {
-		return nil, xerrors.Errorf("failed to read NDB slot pages: %w", err)
+		return nil, fmt.Errorf("failed to read NDB slot pages: %w", err)
 	}
 
 	return &RpmNDB{
@@ -150,7 +149,7 @@ func (db *RpmNDB) Read() <-chan dbi.Entry {
 			if slot.SlotMagic != NDB_SlotMagic {
 				fmt.Println("bad slot magic", slot.SlotMagic)
 				entries <- dbi.Entry{
-					Err: xerrors.Errorf("bad slot Magic: %x", slot.SlotMagic),
+					Err: fmt.Errorf("bad slot Magic: %x", slot.SlotMagic),
 				}
 				return
 			}
@@ -179,12 +178,12 @@ func (db *RpmNDB) Read() <-chan dbi.Entry {
 			const NDB_BlobMagic = 'B' | 'l'<<8 | 'b'<<16 | 'S'<<24
 			if blobHeaderBuff.BlobMagic != NDB_BlobMagic {
 				entries <- dbi.Entry{
-					Err: xerrors.Errorf("unexpected NDB blob Magic for pkg %d: %x", slot.PkgIndex, blobHeaderBuff.BlobMagic),
+					Err: fmt.Errorf("unexpected NDB blob Magic for pkg %d: %x", slot.PkgIndex, blobHeaderBuff.BlobMagic),
 				}
 			}
 			if blobHeaderBuff.PkgIndex != slot.PkgIndex {
 				entries <- dbi.Entry{
-					Err: xerrors.Errorf("failed to find NDB blob for pkg %d", slot.PkgIndex),
+					Err: fmt.Errorf("failed to find NDB blob for pkg %d", slot.PkgIndex),
 				}
 			}
 			// ### check that BlkCnt == (BLOBHEAD_SIZE + bloblen + BLOBTAIL_SIZE + PKGDB_BLK_SIZE - 1) / PKGDB_BLK_SIZE)
