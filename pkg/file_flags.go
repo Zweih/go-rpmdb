@@ -1,4 +1,4 @@
-package rpmdb
+package pkg
 
 // source: https://github.com/rpm-software-management/rpm/blob/da55723907418bfb3939cd6ddd941b3fdb4f6887/lib/rpmfiles.h#L46-L63
 const (

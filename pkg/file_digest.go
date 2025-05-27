@@ -1,4 +1,4 @@
-package rpmdb
+package pkg
 
 // source: https://github.com/rpm-software-management/rpm/blob/0b75075a8d006c8f792d33a57eae7da6b66a4591/rpmio/rpmpgp.h#L241-L275
 

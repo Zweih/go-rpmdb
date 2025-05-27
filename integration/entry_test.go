@@ -1,12 +1,12 @@
-package rpmdb
+package integration
 
 import (
 	"testing"
 
+	"github.com/Zweih/go-rpmdb/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
-//
 func Test_headerImport(t *testing.T) {
 	tests := []struct {
 		name string
@@ -21,7 +21,7 @@ func Test_headerImport(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.NotPanics(t, func() {
-				_, _ = headerImport(tt.data)
+				_, _ = pkg.HeaderImport(tt.data)
 			})
 		})
 	}

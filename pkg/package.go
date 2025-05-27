@@ -1,4 +1,4 @@
-package rpmdb
+package pkg
 
 import (
 	"bytes"
@@ -61,7 +61,7 @@ type FileInfo struct {
 }
 
 // ref. https://github.com/rpm-software-management/rpm/blob/rpm-4.14.3-release/lib/tagexts.c#L752
-func getNEVRA(indexEntries []indexEntry) (*PackageInfo, error) {
+func GetNEVRA(indexEntries []IndexEntry) (*PackageInfo, error) {
 	pkgInfo := &PackageInfo{}
 	for _, ie := range indexEntries {
 		switch ie.Info.Tag {
@@ -248,7 +248,7 @@ func getNEVRA(indexEntries []indexEntry) (*PackageInfo, error) {
 			if ie.Info.Type != RPM_BIN_TYPE {
 				return nil, errors.New("invalid rsa signature")
 			}
-			val, err := parsePGP(ie)
+			val, err := ParsePGP(ie)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse rsa signature: %w", err)
 			}
@@ -257,7 +257,7 @@ func getNEVRA(indexEntries []indexEntry) (*PackageInfo, error) {
 			if ie.Info.Type != RPM_BIN_TYPE {
 				return nil, errors.New("invalid pgp signature")
 			}
-			val, err := parsePGP(ie)
+			val, err := ParsePGP(ie)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse pgp signature: %w", err)
 			}
@@ -354,7 +354,7 @@ var hashLookup = map[uint8]string{
 	0x08: "SHA256",
 }
 
-func parsePGP(ie indexEntry) (string, error) {
+func ParsePGP(ie IndexEntry) (string, error) {
 	var tag, signatureType, version uint8
 
 	r := bytes.NewReader(ie.Data)

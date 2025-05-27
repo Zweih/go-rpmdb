@@ -1,25 +1,27 @@
-package rpmdb
+package integration
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/Zweih/go-rpmdb/pkg"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFileDigest(t *testing.T) {
 	tests := []struct {
-		algorithm DigestAlgorithm
+		algorithm pkg.DigestAlgorithm
 		expected  string
 	}{
 		{
-			algorithm: PGPHASHALGO_MD5,
+			algorithm: pkg.PGPHASHALGO_MD5,
 			expected:  "md5",
 		},
 		{
-			algorithm: PGPHASHALGO_SHA1,
+			algorithm: pkg.PGPHASHALGO_SHA1,
 			expected:  "sha1",
 		},
 		{
-			algorithm: PGPHASHALGO_RIPEMD160,
+			algorithm: pkg.PGPHASHALGO_RIPEMD160,
 			expected:  "ripemd160",
 		},
 		{
@@ -27,31 +29,31 @@ func TestFileDigest(t *testing.T) {
 			expected:  "unknown-digest-algorithm",
 		},
 		{
-			algorithm: PGPHASHALGO_MD2,
+			algorithm: pkg.PGPHASHALGO_MD2,
 			expected:  "md2",
 		},
 		{
-			algorithm: PGPHASHALGO_TIGER192,
+			algorithm: pkg.PGPHASHALGO_TIGER192,
 			expected:  "tiger192",
 		},
 		{
-			algorithm: PGPHASHALGO_HAVAL_5_160,
+			algorithm: pkg.PGPHASHALGO_HAVAL_5_160,
 			expected:  "haval-5-160",
 		},
 		{
-			algorithm: PGPHASHALGO_SHA256,
+			algorithm: pkg.PGPHASHALGO_SHA256,
 			expected:  "sha256",
 		},
 		{
-			algorithm: PGPHASHALGO_SHA384,
+			algorithm: pkg.PGPHASHALGO_SHA384,
 			expected:  "sha384",
 		},
 		{
-			algorithm: PGPHASHALGO_SHA512,
+			algorithm: pkg.PGPHASHALGO_SHA512,
 			expected:  "sha512",
 		},
 		{
-			algorithm: PGPHASHALGO_SHA224,
+			algorithm: pkg.PGPHASHALGO_SHA224,
 			expected:  "sha224",
 		},
 		{
