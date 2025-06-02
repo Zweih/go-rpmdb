@@ -28,6 +28,14 @@ jobs:
       with:
         go-version: '1.24.1'
 
+    - name: Install SQLite3 (Windows only)
+      if: runner.os == 'Windows'
+      run: choco install sqlite
+
+    - name: Verify SQLite3 installation
+      run: |
+        sqlite3 --version
+
     - name: Test integration module
       run: |
         cd integration
