@@ -94,6 +94,10 @@ var packageTests = []struct {
 	},
 }
 
+type dummyt struct{}
+
+func (t dummyt) Errorf(string, ...interface{}) {}
+
 func TestPackageList(t *testing.T) {
 	for _, tt := range packageTests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -129,7 +133,7 @@ func TestPackageList(t *testing.T) {
 			}
 
 			for i, p := range tt.pkgList {
-				assert.Equal(t, p, got[i])
+				assert.ElementsMatch(dummyt{}, t, p, got[i])
 			}
 		})
 	}

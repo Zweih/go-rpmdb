@@ -3,16 +3,28 @@ package sqlite3
 import (
 	"bufio"
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
+	"sync"
 
 	dbi "github.com/Zweih/go-rpmdb/pkg/db"
+	"github.com/Zweih/go-rpmdb/pkg/worker"
 )
 
 type SQLite3 struct {
 	path string
+}
+
+type decodedBlob struct {
+	data  []byte
+	index int
+}
+
+type hexBatch struct {
+	lines      []string
+	startIndex int
 }
 
 var (
@@ -50,83 +62,113 @@ func (db *SQLite3) Read() <-chan dbi.Entry {
 	go func() {
 		defer close(entries)
 
-		cmd := exec.Command("sqlite3", db.path, "SELECT hex(blob) FROM Packages")
-		stdout, err := cmd.StdoutPipe()
-		if err != nil {
-			entries <- dbi.Entry{Err: fmt.Errorf("failed to create pipe: %w", err)}
-			return
-		}
+		hexBatches := make(chan hexBatch, 20)
+		errChan := make(chan error, 10)
+		var errGroup sync.WaitGroup
 
-		if err := cmd.Start(); err != nil {
-			entries <- dbi.Entry{Err: fmt.Errorf("failed to start sqlite3: %w", err)}
-			return
-		}
+		go func() {
+			defer close(hexBatches)
 
-		scanner := bufio.NewScanner(stdout)
-		buf := make([]byte, 0, 64*1024)
-		scanner.Buffer(buf, 10*1024*1024)
+			uri := fmt.Sprintf("file:%s?mode=ro&immutable=1&cache=private", db.path)
 
-		for scanner.Scan() {
-			hexData := strings.TrimSpace(scanner.Text())
-			if hexData == "" {
-				continue
-			}
+			script := `
+      PRAGMA cache_size = -64000;
+      PRAGMA page_size = 4096;
+      PRAGMA temp_store = MEMORY;
+      PRAGMA synchronous = OFF;
+      SELECT hex(blob) FROM Packages;
+      `
 
-			data, err := hexDecode(hexData)
+			cmd := exec.Command("sqlite3", "-readonly", "-batch", uri, script)
+
+			stdout, err := cmd.StdoutPipe()
 			if err != nil {
-				entries <- dbi.Entry{Err: fmt.Errorf("failed to decode hex data: %w", err)}
+				errChan <- fmt.Errorf("failed to create pipe: %w", err)
 				return
 			}
 
-			entries <- dbi.Entry{Value: data, Err: nil}
+			if err := cmd.Start(); err != nil {
+				errChan <- fmt.Errorf("failed to start sqlite3: %w", err)
+				return
+			}
+
+			scanner := bufio.NewScanner(stdout)
+			buf := make([]byte, 0, 64*1024)
+			scanner.Buffer(buf, 8*1024*1024)
+			batch := make([]string, 0, 10)
+			startIndex := 0
+			currentIndex := 0
+
+			for scanner.Scan() {
+				hexData := scanner.Text()
+				if len(hexData) == 0 {
+					continue
+				}
+
+				batch = append(batch, hexData)
+
+				if len(batch) >= 10 {
+					hexBatches <- hexBatch{
+						lines:      batch,
+						startIndex: startIndex,
+					}
+
+					batch = make([]string, 0, 10)
+					startIndex = currentIndex + 1
+				}
+
+				currentIndex++
+			}
+
+			if len(batch) > 0 {
+				hexBatches <- hexBatch{
+					lines:      batch,
+					startIndex: startIndex,
+				}
+			}
+		}()
+
+		decodedChan := worker.RunWorkers(
+			hexBatches,
+			errChan,
+			&errGroup,
+			decodeBatch,
+			0,
+			50,
+		)
+
+		for batch := range decodedChan {
+			for _, entry := range batch {
+				entries <- entry
+			}
 		}
 
-		if err := scanner.Err(); err != nil {
-			entries <- dbi.Entry{Err: fmt.Errorf("scanner error: %w", err)}
-			return
-		}
+		errGroup.Wait()
+		close(errChan)
 
-		if err := cmd.Wait(); err != nil {
-			entries <- dbi.Entry{Err: fmt.Errorf("sqlite3 command failed: %w", err)}
+		for err := range errChan {
+			entries <- dbi.Entry{Err: err}
 		}
 	}()
 
 	return entries
 }
 
+func decodeBatch(batch hexBatch) ([]dbi.Entry, error) {
+	results := make([]dbi.Entry, 0, len(batch.lines))
+
+	for i, line := range batch.lines {
+		data, err := hex.DecodeString(line)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode hex at index %d: %w", batch.startIndex+i, err)
+		}
+
+		results = append(results, dbi.Entry{Value: data})
+	}
+
+	return results, nil
+}
+
 func (db *SQLite3) Close() error {
 	return nil
-}
-
-func hexDecode(s string) ([]byte, error) {
-	if len(s)%2 != 0 {
-		return nil, fmt.Errorf("odd length hex string")
-	}
-
-	result := make([]byte, len(s)/2)
-	for i := 0; i < len(s); i += 2 {
-		high, err := hexCharToByte(s[i])
-		if err != nil {
-			return nil, err
-		}
-		low, err := hexCharToByte(s[i+1])
-		if err != nil {
-			return nil, err
-		}
-		result[i/2] = high<<4 | low
-	}
-	return result, nil
-}
-
-func hexCharToByte(c byte) (byte, error) {
-	switch {
-	case '0' <= c && c <= '9':
-		return c - '0', nil
-	case 'a' <= c && c <= 'f':
-		return c - 'a' + 10, nil
-	case 'A' <= c && c <= 'F':
-		return c - 'A' + 10, nil
-	default:
-		return 0, fmt.Errorf("invalid hex character: %c", c)
-	}
 }
